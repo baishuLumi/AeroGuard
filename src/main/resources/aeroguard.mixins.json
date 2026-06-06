@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "dev.codex.aeroguard.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "mixins": [
+    "PhysicsChunkTicketManagerMixin",
+    "SubLevelHoldingChunkMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

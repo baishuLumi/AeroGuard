@@ -1,0 +1,100 @@
+plugins {
+    id "java-library"
+    id "net.neoforged.moddev" version "2.0.140"
+}
+
+version = mod_version
+group = mod_group
+
+base {
+    archivesName = "${mod_id}-${minecraft_version}-neoforge"
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(java_version)
+    withSourcesJar()
+}
+
+repositories {
+    flatDir {
+        dirs "libs"
+    }
+    mavenCentral()
+    maven {
+        name = "NeoForged"
+        url = "https://maven.neoforged.net/releases"
+    }
+    maven {
+        name = "ParchmentMC"
+        url = "https://maven.parchmentmc.org"
+    }
+    maven {
+        name = "RyanHCode Releases"
+        url = "https://maven.ryanhcode.dev/releases"
+    }
+    maven {
+        name = "Create"
+        url = "https://maven.createmod.net"
+    }
+    maven {
+        name = "BlameJared"
+        url = "https://maven.blamejared.com"
+    }
+}
+
+neoForge {
+    version = neoforge_version
+
+    parchment {
+        minecraftVersion = parchment_minecraft
+        mappingsVersion = parchment_version
+    }
+
+    runs {
+        server {
+            server()
+            gameDirectory = project.file("runs/server")
+        }
+        client {
+            client()
+            gameDirectory = project.file("runs/client")
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+dependencies {
+    compileOnly("dev.ryanhcode.sable:sable-neoforge-${minecraft_version}:${sable_version}") {
+        exclude group: "foundry.veil"
+        exclude group: "com.tterrag.registrate"
+    }
+    compileOnly "org.spongepowered:mixin:0.8.5"
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = "UTF-8"
+}
+
+processResources {
+    def props = [
+            mod_id: mod_id,
+            mod_name: mod_name,
+            mod_version: mod_version,
+            mod_authors: mod_authors,
+            mod_description: mod_description,
+            minecraft_version_range: minecraft_version_range,
+            neoforge_loader_version_range: neoforge_loader_version_range,
+            neoforge_version: neoforge_version,
+            sable_version: sable_version
+    ]
+
+    inputs.properties props
+    filesMatching(["META-INF/neoforge.mods.toml", "*.mixins.json"]) {
+        expand props
+    }
+}
